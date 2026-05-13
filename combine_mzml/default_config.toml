@@ -1,0 +1,51 @@
+# Default SpectraMerger parameters for combine-mzml.
+# Keys mirror the flat (key, value, description) list from example.py /
+# pyopenms's SpectraMerger.getDefaults(). Sub-namespaces (e.g. "block_method:")
+# use the literal colon-separated key as TOML strings to preserve the 1:1
+# mapping with the C++ API.
+
+[params]
+"mz_binning_width" = 5.0
+"mz_binning_width_unit" = "ppm"
+"sort_blocks" = "RT_ascending"
+
+"average_gaussian:spectrum_type" = "automatic"
+"average_gaussian:ms_level" = 1
+"average_gaussian:rt_FWHM" = 5.0
+"average_gaussian:cutoff" = 0.01
+"average_gaussian:precursor_mass_tol" = 0.0
+"average_gaussian:precursor_max_charge" = 1
+
+"average_tophat:spectrum_type" = "automatic"
+"average_tophat:ms_level" = 1
+"average_tophat:rt_range" = 5.0
+"average_tophat:rt_unit" = "scans"
+
+"block_method:ms_levels" = [1, 2]
+"block_method:rt_block_size" = 5
+"block_method:rt_max_length" = 0.0
+
+"precursor_method:mz_tolerance" = 0.0001
+"precursor_method:mass_tolerance" = 0.0
+"precursor_method:rt_tolerance" = 5.0
+
+[descriptions]
+"mz_binning_width" = "minimum m/z distance for two data points (profile data) or peaks (centroided data) to be considered distinct. Closer data points or peaks will be merged."
+"mz_binning_width_unit" = "Unit in which the distance between two data points or peaks is given."
+"sort_blocks" = "Sort blocks by <?> before merging them (useful for precursor order)"
+"average_gaussian:spectrum_type" = "Spectrum type of the MS level to be averaged"
+"average_gaussian:ms_level" = "If set to be 0, each MS level will be merged from 1 to max. Otherwise, average spectra of this level. All other spectra remain unchanged."
+"average_gaussian:rt_FWHM" = "FWHM of Gauss curve in seconds to be averaged over."
+"average_gaussian:cutoff" = "Intensity cutoff for Gaussian. The Gaussian RT profile decreases from 1 at its apex to 0 at infinity. Spectra for which the intensity of the Gaussian drops below the cutoff do not contribute to the average."
+"average_gaussian:precursor_mass_tol" = "PPM mass tolerance for precursor mass. If set, MSn (n>2) spectra of precursor masses within the tolerance are averaged."
+"average_gaussian:precursor_max_charge" = "Possible maximum precursor ion charge. Effective only when average_gaussian:precursor_mass_tol option is active."
+"average_tophat:spectrum_type" = "Spectrum type of the MS level to be averaged"
+"average_tophat:ms_level" = "If set to be 0, each MS level will be merged from 1 to max. Otherwise, average spectra of this level. All other spectra remain unchanged."
+"average_tophat:rt_range" = "RT range to be averaged over, i.e. +/-(RT range)/2 from each spectrum."
+"average_tophat:rt_unit" = "Unit for RT range."
+"block_method:ms_levels" = "Merge spectra of this level. All spectra with other MS levels remain untouched."
+"block_method:rt_block_size" = "Maximum number of scans to be summed up."
+"block_method:rt_max_length" = "Maximum RT size of the block in seconds (0.0 = no size restriction)."
+"precursor_method:mz_tolerance" = "Max m/z distance of the precursor entries of two spectra to be merged in [Da]."
+"precursor_method:mass_tolerance" = "Max mass distance of the precursor entries of two spectra to be merged in [Da]. Active when set to a positive value."
+"precursor_method:rt_tolerance" = "Max RT distance of the precursor entries of two spectra to be merged in [s]."

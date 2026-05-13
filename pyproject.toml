@@ -1,0 +1,26 @@
+[project]
+name = "combine-mzml"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "ipython>=9.13.0",
+    "pyopenms>=3.5.0",
+    "pyqt5>=5.15.11",
+    "typer>=0.25.1",
+]
+
+[project.scripts]
+combine-mzml = "combine_mzml.cli:app"
+
+[project.gui-scripts]
+combine-mzml-gui = "combine_mzml.gui:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["combine_mzml"]
+

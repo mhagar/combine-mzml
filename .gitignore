@@ -1,0 +1,18 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+# PyInstaller leaves these next to the spec; ignore but keep the .spec checked in
+*.spec.bak
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Mass spec data — too large for git, regenerable from raw or by re-running
+# the tool. Don't commit by accident.
+*.mzML
+*.mzml
+
