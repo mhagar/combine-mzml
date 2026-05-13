@@ -132,7 +132,7 @@ class Worker(QtCore.QObject):
                 else:
                     raise ValueError(f"Unknown method: {self.method}")
 
-                out_path = self.out_dir / f"{in_path.stem}.{out_tag}.mzML"
+                out_path = self.out_dir / f"{in_path.stem}_{out_tag}.mzML"
                 self.log.emit(
                     f"    writing {out_path.name} ({new_exp.getNrSpectra()} spectra) ..."
                 )
