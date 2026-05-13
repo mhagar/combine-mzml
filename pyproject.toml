@@ -24,3 +24,19 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["combine_mzml"]
 
+[tool.uv]
+# Force the resolver to pick package versions whose wheels exist for *all*
+# of these environments, not just the one we happen to be syncing on. This
+# is necessary because `pyqt5-qt5` ships different latest versions per OS:
+# 5.15.18 has only Linux/macOS wheels, while Windows tops out at older
+# releases. Without this constraint, syncing on Linux locks a version
+# that then fails to install on the Windows VM.
+required-environments = [
+    "sys_platform == 'linux' and platform_machine == 'x86_64'",
+    "sys_platform == 'win32' and platform_machine == 'AMD64'",
+    "sys_platform == 'darwin' and platform_machine == 'arm64'",
+    "sys_platform == 'darwin' and platform_machine == 'x86_64'",
+]
+
+
+

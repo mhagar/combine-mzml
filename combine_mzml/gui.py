@@ -44,15 +44,16 @@ METHODS = [
 
 # ===================== worker =====================
 
+
 class Worker(QtCore.QObject):
     """
     Runs the actual mzML processing off the UI thread
     """
 
-    progress = QtCore.pyqtSignal(int, int)        # (done, total)
+    progress = QtCore.pyqtSignal(int, int)  # (done, total)
     log = QtCore.pyqtSignal(str)
-    file_done = QtCore.pyqtSignal(str, str)       # (input_path, output_path)
-    finished = QtCore.pyqtSignal(bool, str)       # (ok, message)
+    file_done = QtCore.pyqtSignal(str, str)  # (input_path, output_path)
+    finished = QtCore.pyqtSignal(bool, str)  # (ok, message)
 
     def __init__(
         self,
@@ -103,11 +104,15 @@ class Worker(QtCore.QObject):
                 self.log.emit(f"    {before} spectra loaded")
 
                 if self.method == "decimate":
-                    new_exp = m_decimate(exp, factor=self.factor, ms_levels=self.ms_levels)
+                    new_exp = m_decimate(
+                        exp, factor=self.factor, ms_levels=self.ms_levels
+                    )
                     out_tag = f"decimate_{self.factor}"
                 elif self.method == "blockwise":
                     cfg = load_config(self.config_path)
-                    cfg.setdefault("params", {})["block_method:rt_block_size"] = self.factor
+                    cfg.setdefault("params", {})["block_method:rt_block_size"] = (
+                        self.factor
+                    )
                     cfg["params"]["block_method:ms_levels"] = list(self.ms_levels)
                     new_exp = m_blockwise(exp, cfg)
                     out_tag = f"blockwise_{self.factor}"
@@ -115,8 +120,12 @@ class Worker(QtCore.QObject):
                     kind = "gaussian" if self.method.endswith("gaussian") else "tophat"
                     cfg = load_config(self.config_path)
                     new_exp = m_average(
-                        exp, cfg, average_type=kind, ms_levels=self.ms_levels,
-                        factor=float(self.factor), factor_unit=self.factor_unit,
+                        exp,
+                        cfg,
+                        average_type=kind,
+                        ms_levels=self.ms_levels,
+                        factor=float(self.factor),
+                        factor_unit=self.factor_unit,
                     )
                     unit_tag = "s" if self.factor_unit == "seconds" else "scans"
                     out_tag = f"average-{kind}_{self.factor}{unit_tag}"
@@ -124,7 +133,9 @@ class Worker(QtCore.QObject):
                     raise ValueError(f"Unknown method: {self.method}")
 
                 out_path = self.out_dir / f"{in_path.stem}.{out_tag}.mzML"
-                self.log.emit(f"    writing {out_path.name} ({new_exp.getNrSpectra()} spectra) ...")
+                self.log.emit(
+                    f"    writing {out_path.name} ({new_exp.getNrSpectra()} spectra) ..."
+                )
                 oms.MzMLFile().store(str(out_path), new_exp)
 
                 self.file_done.emit(str(in_path), str(out_path))
@@ -138,6 +149,7 @@ class Worker(QtCore.QObject):
 
 
 # ===================== wizard pages =====================
+
 
 class IntroPage(QtWidgets.QWizardPage):
     def __init__(self) -> None:
@@ -243,7 +255,9 @@ class MethodPage(QtWidgets.QWizardPage):
         self.registerField(F_METHOD, self._hidden)
 
         for key, rb in self._buttons.items():
-            rb.toggled.connect(lambda checked, k=key: checked and self._hidden.setText(k))
+            rb.toggled.connect(
+                lambda checked, k=key: checked and self._hidden.setText(k)
+            )
 
 
 class ParamsPage(QtWidgets.QWizardPage):
@@ -291,7 +305,9 @@ class ParamsPage(QtWidgets.QWizardPage):
         form.addRow("MS levels to process:", ms_w)
 
         self.config_edit = QtWidgets.QLineEdit()
-        self.config_edit.setPlaceholderText("(optional) uses built-in defaults if blank")
+        self.config_edit.setPlaceholderText(
+            "(optional) uses built-in defaults if blank"
+        )
         btn_browse = QtWidgets.QPushButton("Browse…")
         btn_browse.clicked.connect(self._browse_config)
         cfg_row = QtWidgets.QHBoxLayout()
@@ -306,8 +322,12 @@ class ParamsPage(QtWidgets.QWizardPage):
         self.registerField(F_MS1, self.ms1)
         self.registerField(F_MS2, self.ms2)
         self.registerField(F_CONFIG, self.config_edit)
-        self.registerField(F_UNIT, self.unit, "currentText", "currentTextChanged")
-
+        # PyQt5's registerField wants the actual signal object for changedSignal,
+        # not a string name (PyQt6 accepts the string form). Pass the bound
+        # signal directly so the wizard tracks combo changes correctly.
+        self.registerField(
+            F_UNIT, self.unit, "currentText", self.unit.currentTextChanged
+        )
         self.ms1.toggled.connect(lambda _: self.completeChanged.emit())
         self.ms2.toggled.connect(lambda _: self.completeChanged.emit())
 
@@ -350,7 +370,9 @@ class OutputPage(QtWidgets.QWizardPage):
         self.registerField(f"{F_OUTDIR}*", self.out_edit)
 
     def _browse(self) -> None:
-        path = QtWidgets.QFileDialog.getExistingDirectory(self, "Select output directory")
+        path = QtWidgets.QFileDialog.getExistingDirectory(
+            self, "Select output directory"
+        )
         if path:
             self.out_edit.setText(path)
 
@@ -422,7 +444,9 @@ class RunPage(QtWidgets.QWizardPage):
         self.bar.setValue(0)
 
         self._thread = QtCore.QThread(self)
-        self._worker = Worker(inputs, method, factor, ms_levels, out_dir, config_path, factor_unit=unit)
+        self._worker = Worker(
+            inputs, method, factor, ms_levels, out_dir, config_path, factor_unit=unit
+        )
         self._worker.moveToThread(self._thread)
         self._thread.started.connect(self._worker.run)
         self._worker.progress.connect(self._on_progress)
@@ -453,6 +477,7 @@ class RunPage(QtWidgets.QWizardPage):
 
 
 # ===================== wizard =====================
+
 
 class CombineMzMLWizard(QtWidgets.QWizard):
     def __init__(self) -> None:
