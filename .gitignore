@@ -15,4 +15,10 @@ wheels/
 # the tool. Don't commit by accident.
 *.mzML
 *.mzml
+# ...except the committed test fixture under tests/data/, which we want
+# travelling with the repo so the GUI/CLI can be smoke-tested on any
+# machine (including freshly-bundled Windows builds) without hunting for
+# a sample file.
+!tests/data/*.mzML
+!tests/data/*.mzml
 
