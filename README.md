@@ -13,7 +13,7 @@ Three reduction methods are offered:
 
 ## Installation
 
-Pre-built binaries for Windows and Linux available [here](https://github.com/mhagar/combine-mzml/releases). Unzip and run `combine-mzml-gui` or `combine_mzml-gui.exe`
+Pre-built binaries for Windows and Linux available [here](https://github.com/mhagar/combine-mzml/releases). Just run `combine-mzml-gui-linux` or `combine_mzml-gui-windows.exe`
 
 To install from source, the project uses [`uv`](https://docs.astral.sh/uv/) for environment management:
 
@@ -26,7 +26,7 @@ uv run combine-mzml --help        # CLI
 uv run combine-mzml-gui           # GUI wizard
 ```
 
-A sample mzML `tests/data/test_file.mzML` can be used to test the tool.
+Can use `tests/data/test_file.mzML`
 
 ## CLI usage
 
@@ -48,8 +48,7 @@ uv run combine-mzml dump-config > my_config.toml
 ```
 
 Each subcommand takes `--config PATH.toml` to override the built-in defaults,
-plus `-o/--output` to set the output filename and `--ms-levels 1,2` to
-restrict processing to particular MS levels.
+plus `-o/--output` to set the output filename and `--ms-levels 1,2` 
 
 ## Configuration
 
@@ -88,29 +87,17 @@ The full default config, equivalent to `combine-mzml dump-config`:
 "precursor_method:rt_tolerance" = 5.0
 ```
 
-Key names mirror pyopenms's `SpectraMerger.getDefaults()` 1:1, including the
-`section:key` namespace separator. See [pyopenms's spectrum-merging
-docs](https://pyopenms.readthedocs.io/en/latest/user_guide/spectrum_merging.html)
-for what each parameter does.
+Key names mirror pyopenms's `SpectraMerger.getDefaults()`. See [pyopenms's spectrum-merging
+docs](https://pyopenms.readthedocs.io/en/latest/user_guide/spectrum_merging.html) for what each parameter does.
 
 A note on units for `average`: the `--factor` argument is in **scans** by
 default for both Gaussian and top-hat kernels. Internally, Gaussian's FWHM
 is in seconds, so when `--unit scans` (the default) the tool multiplies your
-factor by the median RT delta of the relevant MS level. Pass
-`--unit seconds` to bypass this conversion.
+factor by the median RT delta of the relevant MS level. Pass `--unit seconds` to bypass this conversion.
 
 ## GUI
 
-`combine-mzml-gui` opens a six-page wizard:
-
-1. **Intro**
-2. **Input files** - multi-select; one batch run uses the same settings for all
-3. **Method**
-4. **Parameters** - factor, MS levels, unit (averaging only), optional config TOML
-5. **Output directory**
-6. **Run** — progress bar + log streamed from a background thread
-
-It calls the same Python functions the CLI does, so behaviour is identical.
+`combine-mzml-gui` opens a six-page wizard that calls the same Python functions the CLI does, so behaviour is identical.
 
 ## Building from source (binary distributions)
 
@@ -123,6 +110,4 @@ uv run pyinstaller combine-mzml-gui.spec --clean
 # -> dist/combine-mzml-gui/combine-mzml-gui[.exe]
 ```
 
-The spec bundles pyopenms's shared-data tree (otherwise the frozen binary
-errors out with `OPENMS_DATA_PATH` complaints at startup) and the project's
-default config TOML.
+The spec bundles pyopenms's required data and the default config TOML
